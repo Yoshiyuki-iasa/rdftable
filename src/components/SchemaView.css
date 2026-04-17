@@ -1,0 +1,320 @@
+.schema-view {
+  flex: 1;
+  background-color: #fff;
+  padding: 16px;
+  padding-left: 72px; /* ハンバーガーメニューのスペースを確保 */
+  overflow-y: auto;
+}
+
+.schema-view.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+
+.schema-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.table-name-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schema-header h2 {
+  font-size: 18px;
+  color: #333;
+  margin: 0;
+}
+
+.edit-btn {
+  padding: 4px 8px;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.edit-btn:hover {
+  opacity: 1;
+  background-color: #f5f5f5;
+}
+
+.edit-table-name {
+  padding: 6px 8px;
+  border: 2px solid #1976d2;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: bold;
+  width: 300px;
+}
+
+.table-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.table-category,
+.table-label,
+.table-comment,
+.table-parent-user-class {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.table-label::placeholder,
+.table-comment::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.table-category:focus,
+.table-label:focus,
+.table-comment:focus,
+.table-parent-user-class:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.delete-table-btn {
+  padding: 6px 12px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-table-btn:hover {
+  background-color: #c62828;
+}
+
+.schema-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.schema-table th,
+.schema-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.schema-table th:first-child,
+.schema-table td:first-child {
+  width: 70px;
+  text-align: center;
+}
+
+.schema-table th:nth-child(3),
+.schema-table td:nth-child(3) {
+  width: 150px;
+}
+
+.schema-table th:nth-child(4),
+.schema-table td:nth-child(4) {
+  width: 40px;
+  text-align: center;
+}
+
+.schema-table th:nth-child(5),
+.schema-table td:nth-child(5) {
+  width: 40px;
+  text-align: center;
+}
+
+.schema-table th:nth-child(6),
+.schema-table td:nth-child(6) {
+  width: 120px;
+}
+
+.schema-table th:nth-child(7),
+.schema-table td:nth-child(7) {
+  width: 150px;
+}
+
+.schema-table th:nth-child(8),
+.schema-table td:nth-child(8) {
+  width: 100px;
+}
+
+.schema-table th:nth-child(9),
+.schema-table td:nth-child(9) {
+  width: 200px;
+}
+
+.schema-table th:nth-child(10),
+.schema-table td:nth-child(10) {
+  width: 80px;
+  text-align: center;
+}
+
+.schema-table select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.schema-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  font-size: 13px;
+  color: #555;
+}
+
+.schema-table td {
+  font-size: 14px;
+}
+
+.column-name {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+  display: inline-block;
+}
+
+.column-name:hover {
+  background-color: #f0f0f0;
+}
+
+.edit-column-name {
+  padding: 4px 8px;
+  border: 2px solid #1976d2;
+  border-radius: 3px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.column-label,
+.column-comment {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.column-label::placeholder,
+.column-comment::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.column-label:focus,
+.column-comment:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.schema-table select,
+.schema-table input[type="text"] {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.order-buttons {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+
+.order-btn {
+  padding: 2px 6px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  min-width: 24px;
+}
+
+.order-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.order-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.delete-btn {
+  padding: 4px 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.delete-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.add-column-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.add-column-form input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.add-column-form button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-column-form button:first-of-type {
+  background-color: #1976d2;
+  color: white;
+}
+
+.add-column-form button:last-of-type {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.add-column-btn {
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.add-column-btn:hover {
+  background-color: #1565c0;
+}

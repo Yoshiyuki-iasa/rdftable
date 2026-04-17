@@ -1,0 +1,177 @@
+.sidebar {
+  width: 240px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.prefix-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.prefix-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.prefix-input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.prefix-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.prefix-input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.table-list {
+  flex: 1;
+  margin-top: 12px;
+  overflow-y: auto;
+}
+
+.table-group {
+  margin-bottom: 8px;
+}
+
+.table-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.table-group-header:hover {
+  background-color: #f5f5f5;
+}
+
+.collapse-icon {
+  font-size: 10px;
+  color: #666;
+}
+
+.group-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.group-count {
+  font-size: 12px;
+  color: #999;
+  margin-left: auto;
+}
+
+.table-group-list {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 4px;
+}
+
+.table-group-list li {
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.table-group-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.table-group-list li.selected {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.add-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-button:hover {
+  background-color: #1565c0;
+}
+
+.add-table-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rdf-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 12px;
+  transition: background-color 0.2s;
+}
+
+.rdf-button:hover {
+  background-color: #e0e0e0;
+}
+
+.rdf-button.selected {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border-color: #1976d2;
+  font-weight: 500;
+}
+
+.add-table-form input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.add-table-form button {
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-table-form button:first-of-type {
+  background-color: #1976d2;
+  color: white;
+}
+
+.add-table-form button:last-of-type {
+  background-color: #f5f5f5;
+  color: #333;
+}

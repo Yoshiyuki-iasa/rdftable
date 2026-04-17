@@ -1,0 +1,264 @@
+.data-domain-view {
+  flex: 1;
+  background-color: #fff;
+  padding: 16px;
+  padding-left: 72px; /* ハンバーガーメニューのスペースを確保 */
+  overflow-y: auto;
+}
+
+.domain-header {
+  margin-bottom: 20px;
+}
+
+.domain-header h2 {
+  font-size: 20px;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.domain-description {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.add-domain-section {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.add-domain-btn {
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-domain-btn:hover {
+  background-color: #1565c0;
+}
+
+.add-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.add-menu-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.add-menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+.add-menu-item:first-child {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.add-menu-item:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.category-section {
+  margin-bottom: 32px;
+}
+
+.category-title {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #1976d2;
+}
+
+.category-count {
+  color: #999;
+  font-weight: normal;
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.add-domain-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.add-domain-form input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.add-domain-form select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 100px;
+}
+
+.add-domain-form button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-domain-form button:nth-child(3) {
+  background-color: #1976d2;
+  color: white;
+}
+
+.add-domain-form button:nth-child(4) {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.domain-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.domain-table th,
+.domain-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.domain-table th:nth-child(1),
+.domain-table td:nth-child(1) {
+  width: 200px;
+}
+
+.domain-table th:nth-child(2),
+.domain-table td:nth-child(2) {
+  width: 150px;
+}
+
+.domain-table th:nth-child(3),
+.domain-table td:nth-child(3) {
+  width: 120px;
+}
+
+.domain-table th:nth-child(4),
+.domain-table td:nth-child(4) {
+  width: 300px;
+}
+
+.domain-table th:nth-child(5),
+.domain-table td:nth-child(5) {
+  width: 80px;
+  text-align: center;
+}
+
+.domain-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  font-size: 13px;
+  color: #555;
+}
+
+.domain-table td {
+  font-size: 14px;
+}
+
+.domain-name {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+  display: inline-block;
+}
+
+.domain-name:hover {
+  background-color: #f0f0f0;
+}
+
+.edit-domain-name {
+  padding: 4px 8px;
+  border: 2px solid #1976d2;
+  border-radius: 3px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.domain-label,
+.domain-comment {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.domain-label::placeholder,
+.domain-comment::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.domain-label:focus,
+.domain-comment:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.domain-datatype {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.domain-datatype:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.empty-message {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 16px !important;
+}
+
+.delete-btn {
+  padding: 4px 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.delete-btn:hover {
+  background-color: #e0e0e0;
+}
