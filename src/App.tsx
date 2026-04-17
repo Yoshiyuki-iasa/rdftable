@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const response = await fetch('/category.ttl')
+        const response = await fetch('./category.ttl')
         const turtleContent = await response.text()
         const classes = parseCategoryClasses(turtleContent)
         const properties = parseCategoryProperties(turtleContent)
