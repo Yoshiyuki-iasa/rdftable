@@ -1,5 +1,5 @@
 import { Parser, Store, DataFactory } from 'n3'
-import { Table, Column, Prefix, CategoryClass, CategoryProperty } from './types'
+import { Table, Column, Prefix, CategoryClass, CategoryProperty, DataDomain } from './types'
 
 const { namedNode } = DataFactory
 
@@ -9,6 +9,7 @@ const { namedNode } = DataFactory
 export function parseTurtle(turtleContent: string): {
   prefix: Prefix
   tables: Table[]
+  dataDomains: DataDomain[]
 } {
   const parser = new Parser()
   const store = new Store()
@@ -20,10 +21,13 @@ export function parseTurtle(turtleContent: string): {
   // プレフィックスを抽出
   const prefix = extractPrefix(turtleContent)
 
-  // クラス（テーブル）を抽出
-  const tables = extractTables(store, prefix)
+  // データドメインを抽出
+  const dataDomains = extractDataDomains(store, prefix)
 
-  return { prefix, tables }
+  // クラス（テーブル）を抽出（データドメイン名→ID変換用）
+  const tables = extractTables(store, prefix, dataDomains)
+
+  return { prefix, tables, dataDomains }
 }
 
 /**
@@ -32,12 +36,12 @@ export function parseTurtle(turtleContent: string): {
 function extractPrefix(turtleContent: string): Prefix {
   const lines = turtleContent.split('\n')
 
-  // owl, rdf, rdfs, xsd以外のプレフィックスを探す
+  // owl, rdf, rdfs, xsd, category以外のプレフィックスを探す
   for (const line of lines) {
     const match = line.match(/@prefix\s+(\w+):\s+<([^>]+)>\s*\./)
     if (match) {
       const [, name, uri] = match
-      if (!['owl', 'rdf', 'rdfs', 'xsd'].includes(name)) {
+      if (!['owl', 'rdf', 'rdfs', 'xsd', 'category'].includes(name)) {
         return { name, uri }
       }
     }
@@ -49,10 +53,11 @@ function extractPrefix(turtleContent: string): Prefix {
 /**
  * ストアからテーブル（クラス）を抽出
  */
-function extractTables(store: Store, prefix: Prefix): Table[] {
+function extractTables(store: Store, prefix: Prefix, dataDomains: DataDomain[]): Table[] {
   const OWL_CLASS = namedNode('http://www.w3.org/2002/07/owl#Class')
   const RDFS_LABEL = namedNode('http://www.w3.org/2000/01/rdf-schema#label')
   const RDFS_COMMENT = namedNode('http://www.w3.org/2000/01/rdf-schema#comment')
+  const RDFS_SUBCLASS_OF = namedNode('http://www.w3.org/2000/01/rdf-schema#subClassOf')
   const OWL_HAS_KEY = namedNode('http://www.w3.org/2002/07/owl#hasKey')
 
   const tables: Table[] = []
@@ -66,6 +71,9 @@ function extractTables(store: Store, prefix: Prefix): Table[] {
 
   for (const classUri of classes) {
     if (classUri.termType !== 'NamedNode') continue
+
+    // categoryクラス自体は除外（category:Master, category:Referenceなど）
+    if (classUri.value.includes('example.org/category#')) continue
 
     const className = extractLocalName(classUri.value, prefix)
     if (!className) continue
@@ -82,6 +90,29 @@ function extractTables(store: Store, prefix: Prefix): Table[] {
       ? commentQuads[0].object.value
       : undefined
 
+    // rdfs:subClassOfを取得（親クラス）
+    const subClassQuads = store.getQuads(classUri, RDFS_SUBCLASS_OF, null, null)
+    let parentClass: string | undefined
+    let parentUserClassName: string | undefined
+
+    for (const quad of subClassQuads) {
+      if (quad.object.termType !== 'NamedNode') continue
+
+      const parentUri = quad.object.value
+
+      // category:XXX → parentClass（カテゴリクラス）
+      if (parentUri.includes('example.org/category#')) {
+        parentClass = parentUri
+      }
+      // alpha:XXX → parentUserClass（ユーザー定義クラス）
+      else {
+        const localName = extractLocalName(parentUri, prefix)
+        if (localName) {
+          parentUserClassName = localName
+        }
+      }
+    }
+
     // owl:hasKeyを取得（PK判定用）
     const hasKeyQuads = store.getQuads(classUri, OWL_HAS_KEY, null, null)
     const pkProperties = new Set<string>()
@@ -96,16 +127,31 @@ function extractTables(store: Store, prefix: Prefix): Table[] {
     }
 
     // このクラスに関連するプロパティを取得
-    const columns = extractColumns(store, classUri, prefix, pkProperties)
+    const columns = extractColumns(store, classUri, prefix, pkProperties, dataDomains)
 
     tables.push({
       id: `table_${Date.now()}_${Math.random()}`,
       name: className,
       label,
       comment,
-      columns
-    })
+      parentClass,
+      parentUserClass: undefined, // 後で名前解決
+      columns,
+      _parentUserClassName: parentUserClassName // 一時的に名前を保存
+    } as any)
   }
+
+  // parentUserClassName（名前）を parentUserClass（ID）に変換
+  const nameToId = new Map<string, string>()
+  tables.forEach(t => nameToId.set(t.name, t.id))
+
+  tables.forEach(table => {
+    const parentName = (table as any)._parentUserClassName
+    if (parentName) {
+      table.parentUserClass = nameToId.get(parentName)
+    }
+    delete (table as any)._parentUserClassName
+  })
 
   return tables
 }
@@ -117,10 +163,12 @@ function extractColumns(
   store: Store,
   classUri: any,
   prefix: Prefix,
-  pkProperties: Set<string>
+  pkProperties: Set<string>,
+  dataDomains: DataDomain[]
 ): Column[] {
   const RDFS_DOMAIN = namedNode('http://www.w3.org/2000/01/rdf-schema#domain')
   const RDFS_RANGE = namedNode('http://www.w3.org/2000/01/rdf-schema#range')
+  const RDFS_SUBPROPERTY_OF = namedNode('http://www.w3.org/2000/01/rdf-schema#subPropertyOf')
   const RDFS_LABEL = namedNode('http://www.w3.org/2000/01/rdf-schema#label')
   const RDFS_COMMENT = namedNode('http://www.w3.org/2000/01/rdf-schema#comment')
   const OWL_DATATYPE_PROPERTY = namedNode('http://www.w3.org/2002/07/owl#DatatypeProperty')
@@ -133,6 +181,9 @@ function extractColumns(
 
   for (const propUri of properties) {
     if (propUri.termType !== 'NamedNode') continue
+
+    // categoryプロパティは除外（category:categoryID, category:designationなど）
+    if (propUri.value.includes('example.org/category#')) continue
 
     const propName = extractLocalName(propUri.value, prefix)
     if (!propName) continue
@@ -174,6 +225,23 @@ function extractColumns(
       ? commentQuads[0].object.value
       : undefined
 
+    // rdfs:subPropertyOfを取得（データドメイン）
+    const subPropQuads = store.getQuads(propUri, RDFS_SUBPROPERTY_OF, null, null)
+    let dataDomain: string | undefined
+    if (subPropQuads.length > 0 && subPropQuads[0].object.termType === 'NamedNode') {
+      const domainUri = subPropQuads[0].object.value
+      // alphaD:OrgName のような形式から名前を抽出
+      const match = domainUri.match(/#(\w+)$/)
+      if (match) {
+        const domainName = match[1]
+        // データドメイン名からIDを取得
+        const domain = dataDomains.find(d => d.name === domainName)
+        if (domain) {
+          dataDomain = domain.id
+        }
+      }
+    }
+
     columns.push({
       id: `col_${Date.now()}_${Math.random()}`,
       name: propName,
@@ -182,7 +250,8 @@ function extractColumns(
       isPrimaryKey: pkProperties.has(propName),
       isForeignKey: isObjectProperty,
       referencedTable,
-      dataType
+      dataType,
+      dataDomain
     })
   }
 
@@ -329,4 +398,80 @@ export function parseCategoryProperties(turtleContent: string): CategoryProperty
   }
 
   return properties
+}
+
+/**
+ * ストアからデータドメインを抽出
+ */
+function extractDataDomains(store: Store, prefix: Prefix): DataDomain[] {
+  const OWL_DATATYPE_PROPERTY = namedNode('http://www.w3.org/2002/07/owl#DatatypeProperty')
+  const RDFS_LABEL = namedNode('http://www.w3.org/2000/01/rdf-schema#label')
+  const RDFS_COMMENT = namedNode('http://www.w3.org/2000/01/rdf-schema#comment')
+  const RDFS_SUBPROPERTY_OF = namedNode('http://www.w3.org/2000/01/rdf-schema#subPropertyOf')
+  const RDFS_RANGE = namedNode('http://www.w3.org/2000/01/rdf-schema#range')
+  const RDFS_DOMAIN = namedNode('http://www.w3.org/2000/01/rdf-schema#domain')
+
+  const dataDomains: DataDomain[] = []
+
+  // owl:DatatypePropertyのインスタンスを取得
+  const properties = store.getSubjects(
+    namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+    OWL_DATATYPE_PROPERTY,
+    null
+  )
+
+  for (const propUri of properties) {
+    if (propUri.termType !== 'NamedNode') continue
+
+    // categoryプロパティは除外
+    if (propUri.value.includes('example.org/category#')) continue
+
+    // プレフィックスDでマッチするもの（alphaD:など）だけを取得
+    const domainPrefixPattern = new RegExp(`${prefix.uri.replace('#', '-domain#')}`)
+    if (!propUri.value.match(domainPrefixPattern)) continue
+
+    const propName = propUri.value.match(/#(\w+)$/)?.[1]
+    if (!propName) continue
+
+    // rdfs:domainがあるものは除外（テーブルのプロパティ）
+    const domainQuads = store.getQuads(propUri, RDFS_DOMAIN, null, null)
+    if (domainQuads.length > 0) continue
+
+    // rdfs:labelを取得
+    const labelQuads = store.getQuads(propUri, RDFS_LABEL, null, null)
+    const label = labelQuads.length > 0 && labelQuads[0].object.termType === 'Literal'
+      ? labelQuads[0].object.value
+      : undefined
+
+    // rdfs:commentを取得
+    const commentQuads = store.getQuads(propUri, RDFS_COMMENT, null, null)
+    const comment = commentQuads.length > 0 && commentQuads[0].object.termType === 'Literal'
+      ? commentQuads[0].object.value
+      : undefined
+
+    // rdfs:subPropertyOfを取得（親カテゴリプロパティ）
+    const subPropQuads = store.getQuads(propUri, RDFS_SUBPROPERTY_OF, null, null)
+    let parentCategory: string | undefined
+    if (subPropQuads.length > 0 && subPropQuads[0].object.termType === 'NamedNode') {
+      parentCategory = subPropQuads[0].object.value
+    }
+
+    // rdfs:rangeを取得（データ型）
+    const rangeQuads = store.getQuads(propUri, RDFS_RANGE, null, null)
+    let dataType: 'string' | 'number' | 'boolean' | 'date' = 'string'
+    if (rangeQuads.length > 0 && rangeQuads[0].object.termType === 'NamedNode') {
+      dataType = getDataTypeFromXsd(rangeQuads[0].object.value)
+    }
+
+    dataDomains.push({
+      id: `domain_${Date.now()}_${Math.random()}`,
+      name: propName,
+      label,
+      comment,
+      parentCategory,
+      dataType
+    })
+  }
+
+  return dataDomains
 }

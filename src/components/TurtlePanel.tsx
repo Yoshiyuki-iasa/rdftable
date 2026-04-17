@@ -41,8 +41,8 @@ export default function TurtlePanel() {
     reader.onload = (event) => {
       const content = event.target?.result as string
       try {
-        const { prefix: importedPrefix, tables: importedTables } = parseTurtle(content)
-        importSchema(importedPrefix, importedTables)
+        const { prefix: importedPrefix, tables: importedTables, dataDomains: importedDataDomains } = parseTurtle(content)
+        importSchema(importedPrefix, importedTables, importedDataDomains)
         alert('インポートが完了しました')
       } catch (error) {
         console.error('Turtle parse error:', error)

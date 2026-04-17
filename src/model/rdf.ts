@@ -136,12 +136,11 @@ export function generateTurtle(prefix: Prefix, tables: Table[], categoryTurtleCo
 
     // rdfs:subClassOf (category)
     if (table.parentClass) {
-      // category プレフィックスを使用して短縮形に変換
-      const categoryPrefix = 'http://www.example.org/category#'
-      const subClassValue = table.parentClass.startsWith(categoryPrefix)
-        ? `category:${table.parentClass.slice(categoryPrefix.length)}`
-        : `<${table.parentClass}>`
-      classProperties.push(`rdfs:subClassOf ${subClassValue}`)
+      // フルURI（http://www.example.org/category#Reference）をcategory:Reference形式に変換
+      const match = table.parentClass.match(/category#(\w+)$/)
+      if (match) {
+        classProperties.push(`rdfs:subClassOf category:${match[1]}`)
+      }
     }
 
     // rdfs:subClassOf (user-defined class)

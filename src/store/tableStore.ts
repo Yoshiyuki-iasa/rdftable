@@ -25,7 +25,7 @@ interface TableStore {
   updatePrefix: (prefix: Partial<Prefix>) => void
 
   // インポート/エクスポート
-  importSchema: (prefix: Prefix, tables: Table[]) => void
+  importSchema: (prefix: Prefix, tables: Table[], dataDomains: DataDomain[]) => void
 
   // テーブル操作
   addTable: (name: string) => void
@@ -94,7 +94,7 @@ export const useTableStore = create<TableStore>()(
         prefix: { ...state.prefix, ...prefix }
       })),
 
-  importSchema: (prefix, tables) => set(() => {
+  importSchema: (prefix, tables, dataDomains) => set(() => {
     // 参照先テーブル名をIDに変換
     const tableNameToId = new Map<string, string>()
     tables.forEach(t => tableNameToId.set(t.name, t.id))
@@ -113,6 +113,7 @@ export const useTableStore = create<TableStore>()(
     return {
       prefix,
       tables: resolvedTables,
+      dataDomains,
       rows: []
     }
   }),
