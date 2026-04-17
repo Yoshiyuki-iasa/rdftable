@@ -1,0 +1,80 @@
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix category: <http://www.example.org/category#> .
+@prefix alpha: <http://www.example.org/alpha#> .
+@prefix alphaD: <http://www.example.org/alpha-domain#> .
+
+### Category Ontology ###
+
+#    Datatypes
+xsd:duration rdf:type rdfs:Datatype .
+
+#    Data properties
+
+category:categoryID rdf:type owl:DatatypeProperty ;
+                    rdfs:comment "集合のMECEな分類。しばしば参照テーブルのキー。"@ja ;
+                    rdfs:label "区分"@ja .
+
+category:designation rdf:type owl:DatatypeProperty ;
+                     rdfs:range xsd:string ;
+                     rdfs:comment "識別子または区分値に紐づく名称"@ja ;
+                     rdfs:label "名称"@ja .
+
+category:duration rdf:type owl:DatatypeProperty ;
+                  rdfs:range xsd:duration ;
+                  rdfs:comment "時間軸上の2点の距離"@ja ;
+                  rdfs:label "時間"@ja .
+
+category:flag rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf category:categoryID ;
+              rdfs:range xsd:boolean ;
+              rdfs:comment "区分値のうち、取り得る値が真偽二値のもの。"@ja ;
+              rdfs:label "フラグ"@ja .
+
+category:numvalue rdf:type owl:DatatypeProperty ;
+                  rdfs:comment "単位を伴う計算可能な数値"@ja ;
+                  rdfs:label "数値"@ja .
+
+category:resourceID rdf:type owl:DatatypeProperty ;
+                    rdfs:comment "マスタのキー。リソースの識別子。"@ja ;
+                    rdfs:label "コード"@ja .
+
+category:sequence rdf:type owl:DatatypeProperty ;
+                  rdfs:comment "トランザクションのキー"@ja ;
+                  rdfs:label "番号"@ja .
+
+category:timestamp rdf:type owl:DatatypeProperty ;
+                   rdfs:range xsd:dateTime ;
+                   rdfs:comment "時間軸上の特定の位置"@ja ;
+                   rdfs:label "時刻"@ja .
+
+category:comment rdf:type owl:DatatypeProperty ;
+                     rdfs:range xsd:string ;
+                     rdfs:comment "自由記述のテキスト"@ja ;
+                     rdfs:label "コメント"@ja .
+
+#    Classes
+
+category:BusinessRule rdf:type owl:Class ;
+                      rdfs:comment "複数のキーを持つマスタないしトランザクション"@ja ;
+                      rdfs:label "交差表"@ja .
+
+category:Master rdf:type owl:Class ;
+                rdfs:comment "取引の主体および対象"@ja ;
+                rdfs:label "マスタ"@ja .
+
+category:Reference rdf:type owl:Class ;
+                   rdfs:comment "区分値などの名称解決に用いる"@ja ;
+                   rdfs:label "参照"@ja .
+
+category:Summary rdf:type owl:Class ;
+                 rdfs:comment "集計テーブル"@ja ;
+                 rdfs:label "集計"@ja .
+
+category:Transaction rdf:type owl:Class ;
+                     rdfs:comment "時系列の取引記録"@ja ;
+                     rdfs:label "トランザクション"@ja .
+
+
