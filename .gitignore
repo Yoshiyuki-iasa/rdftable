@@ -16,6 +16,7 @@ dist-ssr
 claude-logs/
 docs/
 ttlByUser/
+turtle-visualizer/
 
 # Editor directories and files
 .vscode/*

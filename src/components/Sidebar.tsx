@@ -6,12 +6,14 @@ interface SidebarProps {
   selectedTable: string | null
   showingRdf: boolean
   showingDataDomain: boolean
+  showingGraph: boolean
   onSelectTable: (tableId: string) => void
   onShowRdf: () => void
   onShowDataDomain: () => void
+  onShowGraph: () => void
 }
 
-export default function Sidebar({ selectedTable, showingRdf, showingDataDomain, onSelectTable, onShowRdf, onShowDataDomain }: SidebarProps) {
+export default function Sidebar({ selectedTable, showingRdf, showingDataDomain, showingGraph, onSelectTable, onShowRdf, onShowDataDomain, onShowGraph }: SidebarProps) {
   const { prefix, tables, categoryClasses, addTable, updatePrefix } = useTableStore()
   const [newTableName, setNewTableName] = useState('')
   const [isAdding, setIsAdding] = useState(false)
@@ -122,7 +124,7 @@ export default function Sidebar({ selectedTable, showingRdf, showingDataDomain, 
                   {groupTables.map(table => (
                     <li
                       key={table.id}
-                      className={selectedTable === table.id && !showingRdf && !showingDataDomain ? 'selected' : ''}
+                      className={selectedTable === table.id && !showingRdf && !showingDataDomain && !showingGraph ? 'selected' : ''}
                       onClick={() => onSelectTable(table.id)}
                     >
                       {table.name}
@@ -147,6 +149,13 @@ export default function Sidebar({ selectedTable, showingRdf, showingDataDomain, 
         onClick={onShowRdf}
       >
         RDF表示
+      </button>
+
+      <button
+        className={`rdf-button ${showingGraph ? 'selected' : ''}`}
+        onClick={onShowGraph}
+      >
+        📊 グラフ表示
       </button>
     </div>
   )
